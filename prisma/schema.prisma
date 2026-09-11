@@ -1,0 +1,142 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  name         String
+  role         String   @default("ADMIN")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Floor {
+  id          String   @id @default(cuid())
+  floorNumber Int
+  code        String   @unique
+  displayName String
+  rooms       Room[]
+  createdAt   DateTime @default(now())
+}
+
+model Room {
+  id              String     @id @default(cuid())
+  roomNumber      String     @unique
+  floorId         String
+  floor           Floor      @relation(fields: [floorId], references: [id], onDelete: Cascade)
+  sharingCapacity Int
+  monthlyRent     Float
+  status          String     @default("AVAILABLE") // AVAILABLE, PARTIAL, FULL
+  beds            Bed[]
+  residents       Resident[]
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}
+
+model Bed {
+  id        String    @id @default(cuid())
+  roomId    String
+  room      Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  bedNumber Int
+  status    String    @default("AVAILABLE") // AVAILABLE, OCCUPIED
+  resident  Resident?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([roomId, bedNumber])
+}
+
+model Resident {
+  id             String                @id @default(cuid())
+  residentId     String                @unique // e.g. EH-A07-001
+  name           String
+  phone          String
+  joiningDate    DateTime
+  leavingDate    DateTime?
+  checkoutReason String?
+  roomId         String
+  room           Room                  @relation(fields: [roomId], references: [id])
+  bedId          String                @unique
+  bed            Bed                   @relation(fields: [bedId], references: [id])
+  monthlyRent    Float
+  status         String                @default("ACTIVE") // ACTIVE, CHECKED_OUT
+  payments       Payment[]
+  complaints     Complaint[]
+  transfers      RoomTransferHistory[]
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+}
+
+model Payment {
+  id               String   @id @default(cuid())
+  paymentId        String   @unique // e.g. EH-REC-2026-0001
+  residentId       String
+  resident         Resident @relation(fields: [residentId], references: [id], onDelete: Cascade)
+  amount           Float
+  paymentDate      DateTime
+  billingStartDate DateTime
+  billingEndDate   DateTime
+  paymentMethod    String // UPI, CASH, BANK_TRANSFER, CARD, CHEQUE
+  transactionRef   String?
+  status           String   @default("PAID") // PAID, PENDING, OVERDUE, CANCELLED
+  receiptNotes     String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Complaint {
+  id            String                   @id @default(cuid())
+  ticketId      String                   @unique // e.g. EH-TKT-2026-0001
+  residentId    String
+  resident      Resident                 @relation(fields: [residentId], references: [id], onDelete: Cascade)
+  category      String
+  subject       String
+  description   String
+  priority      String                   @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
+  status        String                   @default("SUBMITTED") // SUBMITTED, UNDER_REVIEW, ASSIGNED, IN_PROGRESS, RESOLVED, CLOSED
+  resolvedAt    DateTime?
+  statusHistory ComplaintStatusHistory[]
+  createdAt     DateTime                 @default(now())
+  updatedAt     DateTime                 @updatedAt
+}
+
+model ComplaintStatusHistory {
+  id          String    @id @default(cuid())
+  complaintId String
+  complaint   Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  oldStatus   String
+  newStatus   String
+  comment     String?
+  changedBy   String
+  createdAt   DateTime  @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  type      String // NEW_RESIDENT, RENT_DUE, RENT_OVERDUE, NEW_COMPLAINT, COMPLAINT_STATUS, RESIDENT_CHECKOUT, ROOM_AVAILABLE
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+}
+
+model RoomTransferHistory {
+  id            String   @id @default(cuid())
+  residentId    String
+  resident      Resident @relation(fields: [residentId], references: [id], onDelete: Cascade)
+  oldRoomNumber String
+  oldBedNumber  Int
+  newRoomNumber String
+  newBedNumber  Int
+  transferDate  DateTime @default(now())
+  reason        String?
+  createdAt     DateTime @default(now())
+}
