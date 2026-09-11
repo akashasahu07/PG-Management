@@ -37,6 +37,21 @@ export function AdminSidebar() {
     <aside className="w-64 shrink-0 hidden md:flex flex-col justify-between min-h-[calc(100vh-4rem)] p-4 border-r border-slate-200 dark:border-slate-800/80 bg-white/80 dark:bg-slate-950/70 backdrop-blur-xl transition-colors no-print">
       <div className="space-y-6">
         <div className="px-3 pt-2">
+          <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-indigo-50/50 dark:bg-slate-900/60 border border-indigo-100 dark:border-slate-800 mb-4">
+            <img
+              src="/logo.png"
+              alt="Elite Homes Logo"
+              className="w-9 h-9 rounded-xl object-cover shadow-sm border border-slate-200 dark:border-slate-700 bg-white shrink-0"
+            />
+            <div className="overflow-hidden">
+              <div className="font-bold text-xs text-slate-900 dark:text-white truncate">
+                Elite Homes
+              </div>
+              <p className="text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
+                Admin Panel
+              </p>
+            </div>
+          </div>
           <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             Operations Management
           </p>

@@ -90,10 +90,12 @@ export function ReceiptCard({
 
       {/* Official Receipt Header */}
       <div className="flex items-start justify-between border-b-2 border-indigo-500/20 pb-6">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-600/30">
-            <Building2 className="w-6 h-6" />
-          </div>
+        <div className="flex items-center gap-3.5">
+          <img
+            src="/logo.png"
+            alt="Elite Homes Logo"
+            className="w-14 h-14 rounded-2xl object-cover shadow-md border border-slate-200 dark:border-slate-700 bg-white shrink-0"
+          />
           <div>
             <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
               ELITE HOMES
