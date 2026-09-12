@@ -8,16 +8,6 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'Elite Homes — Modern PG & Hostel Management',
   description: 'Enterprise-grade, automated PG & Hostel Management System for Elite Homes. Resident portal, room allocations, dues tracking, and seamless complaint resolution.',
-  icons: {
-    icon: [
-      { url: '/favicon.ico' },
-      { url: '/logo.png', sizes: '192x192', type: 'image/png' },
-    ],
-    apple: [
-      { url: '/logo.png' },
-    ],
-    shortcut: '/favicon.ico',
-  },
 };
 
 export default function RootLayout({

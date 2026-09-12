@@ -31,12 +31,8 @@ export function Navbar({ userRole, userName, userSubtitle }: NavbarProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-2xl overflow-hidden shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition-transform duration-200 border border-slate-200/60 dark:border-slate-700/60 bg-white shrink-0">
-            <img
-              src="/logo.png"
-              alt="Elite Homes Logo"
-              className="w-full h-full object-cover"
-            />
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-sky-400 flex items-center justify-center shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition-transform duration-200">
+            <Building2 className="w-5 h-5 text-white" />
           </div>
           <div>
             <div className="font-bold text-lg tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
