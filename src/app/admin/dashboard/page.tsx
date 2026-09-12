@@ -19,7 +19,7 @@ import {
 import { formatCurrency, formatDate } from '@/lib/due-date';
 import { AddResidentModal } from '@/components/admin/AddResidentModal';
 import { RecordPaymentModal } from '@/components/admin/RecordPaymentModal';
-import { ReceiptCard } from '@/components/receipts/ReceiptCard';
+import { ReceiptModal } from '@/components/receipts/ReceiptModal';
 
 export default function AdminDashboardPage() {
   const [data, setData] = useState<any>(null);
@@ -32,6 +32,18 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     fetchDashboard();
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowAddResident(false);
+        setShowRecordPayment(false);
+        setSelectedReceiptPayment(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   const fetchDashboard = async () => {
@@ -349,21 +361,10 @@ export default function AdminDashboardPage() {
       />
 
       {/* Receipt Viewer Modal */}
-      {selectedReceiptPayment && (
-        <div
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setSelectedReceiptPayment(null);
-          }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
-        >
-          <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <ReceiptCard
-              payment={selectedReceiptPayment}
-              onClose={() => setSelectedReceiptPayment(null)}
-            />
-          </div>
-        </div>
-      )}
+      <ReceiptModal
+        payment={selectedReceiptPayment}
+        onClose={() => setSelectedReceiptPayment(null)}
+      />
     </div>
   );
 }

@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { formatDate } from '@/lib/due-date';
 import { TimelineTracker } from '@/components/complaints/TimelineTracker';
+import { Modal } from '@/components/ui/Modal';
 
 export default function AdminComplaintsPage() {
   const [complaints, setComplaints] = useState<any[]>([]);
@@ -207,14 +208,13 @@ export default function AdminComplaintsPage() {
       )}
 
       {/* Ticket Details & Lifecycle Drawer / Modal */}
-      {selectedTicket && (
-        <div
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setSelectedTicket(null);
-          }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
-        >
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl animate-slide-up max-h-[90vh] flex flex-col">
+      <Modal
+        isOpen={!!selectedTicket}
+        onClose={() => setSelectedTicket(null)}
+        maxWidthClass="max-w-2xl"
+      >
+        {selectedTicket && (
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-3xl w-full overflow-hidden shadow-2xl animate-slide-up flex flex-col">
             <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-start justify-between">
               <div>
                 <div className="flex items-center gap-2">
@@ -228,68 +228,80 @@ export default function AdminComplaintsPage() {
               </div>
               <button
                 onClick={() => setSelectedTicket(null)}
-                className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
+                className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-6 space-y-6 overflow-y-auto flex-1">
-              {/* Resident Info & Description */}
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 space-y-2">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-500 dark:text-slate-400">
-                    Lodged by: <strong className="text-slate-800 dark:text-white">{selectedTicket.resident?.name}</strong> (Room {selectedTicket.resident?.room?.roomNumber}, Bed #{selectedTicket.resident?.bed?.bedNumber})
-                  </span>
-                  <span className="text-slate-400 dark:text-slate-500">{formatDate(selectedTicket.createdAt)}</span>
+            <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+              {/* Resident Info & Room */}
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs">
+                <div>
+                  <div className="font-bold text-slate-900 dark:text-white">{selectedTicket.resident?.name}</div>
+                  <div className="text-slate-500">
+                    Room {selectedTicket.resident?.room?.roomNumber} (Bed #{selectedTicket.resident?.bed?.bedNumber})
+                  </div>
                 </div>
-                <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed pt-1">
+                <div className="text-right">
+                  <div className="font-medium text-slate-600 dark:text-slate-300">
+                    {selectedTicket.resident?.phone}
+                  </div>
+                  <div className="text-[11px] text-slate-400">
+                    Reported: {formatDate(selectedTicket.createdAt)}
+                  </div>
+                </div>
+              </div>
+
+              {/* Description */}
+              <div>
+                <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Issue Description</h3>
+                <p className="text-sm text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/30 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 leading-relaxed whitespace-pre-wrap">
                   {selectedTicket.description}
                 </p>
               </div>
 
-              {/* Status Timeline */}
+              {/* Lifecycle Visual Timeline */}
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-4">
-                  Resolution Progress Workflow
-                </h4>
-                <TimelineTracker
-                  currentStatus={selectedTicket.status}
-                  history={selectedTicket.statusHistory}
-                />
+                <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Resolution Timeline</h3>
+                <TimelineTracker currentStatus={selectedTicket.status} history={selectedTicket.statusHistory || []} />
               </div>
 
-              {/* Admin Action: Change Status */}
-              <form onSubmit={handleUpdateStatus} className="pt-4 border-t border-slate-200 dark:border-slate-800 space-y-3">
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                  Update Ticket Status
-                </h4>
+              {/* Stage Update Controller */}
+              <form onSubmit={handleUpdateStatus} className="p-4 rounded-2xl bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-200 dark:border-indigo-900/40 space-y-3">
+                <h3 className="text-xs font-bold text-indigo-900 dark:text-indigo-300 uppercase tracking-wider">
+                  Transition Status Stage
+                </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] text-slate-500 dark:text-slate-400 mb-1">New Workflow Stage</label>
+                    <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">
+                      New Status
+                    </label>
                     <select
                       value={newStatus}
                       onChange={(e) => setNewStatus(e.target.value)}
-                      className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white outline-none"
+                      className="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white outline-none"
                     >
-                      <option value="SUBMITTED">Submitted</option>
-                      <option value="UNDER_REVIEW">Under Review</option>
-                      <option value="ASSIGNED">Assigned (Technician Dispatched)</option>
-                      <option value="IN_PROGRESS">In Progress</option>
-                      <option value="RESOLVED">Resolved</option>
-                      <option value="CLOSED">Closed</option>
+                      <option value="SUBMITTED">SUBMITTED</option>
+                      <option value="UNDER_REVIEW">UNDER REVIEW</option>
+                      <option value="ASSIGNED">ASSIGNED</option>
+                      <option value="IN_PROGRESS">IN PROGRESS</option>
+                      <option value="RESOLVED">RESOLVED</option>
+                      <option value="CLOSED">CLOSED</option>
                     </select>
                   </div>
 
                   <div>
-                    <label className="block text-[11px] text-slate-500 dark:text-slate-400 mb-1">Audit Remarks (Optional)</label>
+                    <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">
+                      Stage Transition Note
+                    </label>
                     <input
                       type="text"
                       placeholder="e.g. Electrician scheduled for 3 PM"
                       value={statusComment}
                       onChange={(e) => setStatusComment(e.target.value)}
-                      className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white outline-none"
+                      className="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white outline-none"
                     />
                   </div>
                 </div>
@@ -298,14 +310,14 @@ export default function AdminComplaintsPage() {
                   <button
                     type="button"
                     onClick={() => setSelectedTicket(null)}
-                    className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold transition-all border border-slate-200 dark:border-slate-700"
+                    className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold transition-all border border-slate-200 dark:border-slate-700 cursor-pointer"
                   >
                     Close
                   </button>
                   <button
                     type="submit"
                     disabled={updating || newStatus === selectedTicket.status}
-                    className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold transition-all disabled:opacity-50 shadow-md"
+                    className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition-all disabled:opacity-50 shadow-md cursor-pointer"
                   >
                     {updating ? 'Saving...' : 'Update Ticket Stage'}
                   </button>
@@ -313,8 +325,8 @@ export default function AdminComplaintsPage() {
               </form>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </Modal>
     </div>
   );
 }

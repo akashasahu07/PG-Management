@@ -8,6 +8,10 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'Elite Homes — Modern PG & Hostel Management',
   description: 'Enterprise-grade, automated PG & Hostel Management System for Elite Homes. Resident portal, room allocations, dues tracking, and seamless complaint resolution.',
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({
@@ -19,7 +23,9 @@ export default function RootLayout({
     <html lang="en" className="dark" suppressHydrationWarning>
       <body className={`${inter.className} min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50 antialiased selection:bg-indigo-500 selection:text-white transition-colors duration-200`}>
         <ThemeProvider>
-          {children}
+          <div id="app-root" className="min-h-screen">
+            {children}
+          </div>
         </ThemeProvider>
       </body>
     </html>

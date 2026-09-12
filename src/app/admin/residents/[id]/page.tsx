@@ -18,7 +18,8 @@ import {
 } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/lib/due-date';
 import { RecordPaymentModal } from '@/components/admin/RecordPaymentModal';
-import { ReceiptCard } from '@/components/receipts/ReceiptCard';
+import { ReceiptModal } from '@/components/receipts/ReceiptModal';
+import { Modal } from '@/components/ui/Modal';
 
 export default function ResidentProfilePage({
   params,
@@ -458,177 +459,171 @@ export default function ResidentProfilePage({
       )}
 
       {/* Transfer Modal */}
-      {showTransferModal && (
-        <div
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setShowTransferModal(false);
-          }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
-        >
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-3xl w-full max-w-lg p-6 space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <ArrowRightLeft className="w-5 h-5 text-sky-500" />
-                <span>Transfer Resident Room</span>
-              </h3>
-              <button
-                onClick={() => setShowTransferModal(false)}
-                className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleExecuteTransfer} className="space-y-4">
-              <p className="text-xs text-slate-600 dark:text-slate-400">
-                Transferring <strong>{resident.name}</strong> from current Room {resident.room?.roomNumber}, Bed #{resident.bed?.bedNumber}.
-              </p>
-
-              <div>
-                <label className="block text-xs text-slate-700 dark:text-slate-400 mb-1">Target Floor</label>
-                <select
-                  value={transferFloor}
-                  onChange={(e) => {
-                    setTransferFloor(e.target.value);
-                    setTransferRoomId('');
-                    setTransferBedId('');
-                  }}
-                  className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 outline-none"
-                >
-                  {floors.map((f) => (
-                    <option key={f.code} value={f.code}>{f.displayName}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs text-slate-700 dark:text-slate-400 mb-1">Target Room</label>
-                <select
-                  value={transferRoomId}
-                  onChange={(e) => {
-                    setTransferRoomId(e.target.value);
-                    setTransferBedId('');
-                  }}
-                  className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 outline-none"
-                >
-                  <option value="">Select Room</option>
-                  {availableRooms.map((r: any) => {
-                    const freeCount = r.beds.filter((b: any) => b.status === 'AVAILABLE').length;
-                    return (
-                      <option key={r.id} value={r.id} disabled={freeCount === 0}>
-                        {r.roomNumber} ({freeCount} available beds)
-                      </option>
-                    );
-                  })}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs text-slate-700 dark:text-slate-400 mb-1">Target Bed Slot</label>
-                <select
-                  value={transferBedId}
-                  onChange={(e) => setTransferBedId(e.target.value)}
-                  disabled={!transferRoomId}
-                  className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 outline-none disabled:opacity-50"
-                >
-                  <option value="">Select Bed</option>
-                  {availableBeds.map((b: any) => (
-                    <option key={b.id} value={b.id}>Bed #{b.bedNumber}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs text-slate-700 dark:text-slate-400 mb-1">Transfer Reason (Optional)</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Resident requested lower floor / AC preference"
-                  value={transferReason}
-                  onChange={(e) => setTransferReason(e.target.value)}
-                  className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 outline-none"
-                />
-              </div>
-
-              <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setShowTransferModal(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs text-slate-700 dark:text-slate-300"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={transferring || !transferBedId}
-                  className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold disabled:opacity-50"
-                >
-                  {transferring ? 'Processing...' : 'Confirm Transfer'}
-                </button>
-              </div>
-            </form>
+      <Modal
+        isOpen={showTransferModal}
+        onClose={() => setShowTransferModal(false)}
+        maxWidthClass="max-w-lg"
+      >
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-3xl w-full p-6 space-y-4 shadow-2xl">
+          <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <ArrowRightLeft className="w-5 h-5 text-sky-500" />
+              <span>Transfer Resident Room</span>
+            </h3>
+            <button
+              onClick={() => setShowTransferModal(false)}
+              className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
-        </div>
-      )}
 
-      {/* Checkout Modal */}
-      {showCheckoutModal && (
-        <div
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setShowCheckoutModal(false);
-          }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
-        >
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-3xl w-full max-w-md p-6 space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <LogOut className="w-5 h-5 text-rose-500" />
-                <span>Checkout Resident</span>
-              </h3>
-              <button
-                onClick={() => setShowCheckoutModal(false)}
-                className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                title="Close"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <p className="text-xs text-slate-600 dark:text-slate-300">
-              Are you sure you want to mark <strong>{resident.name}</strong> as checked out? Their bed slot in Room {resident.room?.roomNumber} will immediately become available for new allocation.
+          <form onSubmit={handleExecuteTransfer} className="space-y-4">
+            <p className="text-xs text-slate-600 dark:text-slate-400">
+              Transferring <strong>{resident.name}</strong> from current Room {resident.room?.roomNumber}, Bed #{resident.bed?.bedNumber}.
             </p>
 
-            <form onSubmit={handleExecuteCheckout} className="space-y-4">
-              <div>
-                <label className="block text-xs text-slate-700 dark:text-slate-400 mb-1">Reason for Leaving</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Job transfer / Course completed"
-                  value={checkoutReason}
-                  onChange={(e) => setCheckoutReason(e.target.value)}
-                  className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 outline-none"
-                />
-              </div>
+            <div>
+              <label className="block text-xs text-slate-700 dark:text-slate-400 mb-1">Target Floor</label>
+              <select
+                value={transferFloor}
+                onChange={(e) => {
+                  setTransferFloor(e.target.value);
+                  setTransferRoomId('');
+                  setTransferBedId('');
+                }}
+                className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 outline-none"
+              >
+                {floors.map((f) => (
+                  <option key={f.code} value={f.code}>{f.displayName}</option>
+                ))}
+              </select>
+            </div>
 
-              <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setShowCheckoutModal(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs text-slate-700 dark:text-slate-300"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={checkingOut}
-                  className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold disabled:opacity-50"
-                >
-                  {checkingOut ? 'Checking out...' : 'Confirm Checkout'}
-                </button>
-              </div>
-            </form>
-          </div>
+            <div>
+              <label className="block text-xs text-slate-700 dark:text-slate-400 mb-1">Target Room</label>
+              <select
+                value={transferRoomId}
+                onChange={(e) => {
+                  setTransferRoomId(e.target.value);
+                  setTransferBedId('');
+                }}
+                className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 outline-none"
+              >
+                <option value="">Select Room</option>
+                {availableRooms.map((r: any) => {
+                  const freeCount = r.beds.filter((b: any) => b.status === 'AVAILABLE').length;
+                  return (
+                    <option key={r.id} value={r.id} disabled={freeCount === 0}>
+                      {r.roomNumber} ({freeCount} available beds)
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs text-slate-700 dark:text-slate-400 mb-1">Target Bed Slot</label>
+              <select
+                value={transferBedId}
+                onChange={(e) => setTransferBedId(e.target.value)}
+                disabled={!transferRoomId}
+                className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 outline-none disabled:opacity-50"
+              >
+                <option value="">Select Bed</option>
+                {availableBeds.map((b: any) => (
+                  <option key={b.id} value={b.id}>Bed #{b.bedNumber}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs text-slate-700 dark:text-slate-400 mb-1">Transfer Reason (Optional)</label>
+              <input
+                type="text"
+                placeholder="e.g. Resident requested lower floor / AC preference"
+                value={transferReason}
+                onChange={(e) => setTransferReason(e.target.value)}
+                className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 outline-none"
+              />
+            </div>
+
+            <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setShowTransferModal(false)}
+                className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs text-slate-700 dark:text-slate-300 cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={transferring || !transferBedId}
+                className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold disabled:opacity-50 cursor-pointer"
+              >
+                {transferring ? 'Processing...' : 'Confirm Transfer'}
+              </button>
+            </div>
+          </form>
         </div>
-      )}
+      </Modal>
+
+      {/* Checkout Modal */}
+      <Modal
+        isOpen={showCheckoutModal}
+        onClose={() => setShowCheckoutModal(false)}
+        maxWidthClass="max-w-md"
+      >
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-3xl w-full p-6 space-y-4 shadow-2xl">
+          <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <LogOut className="w-5 h-5 text-rose-500" />
+              <span>Checkout Resident</span>
+            </h3>
+            <button
+              onClick={() => setShowCheckoutModal(false)}
+              className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              title="Close"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          <p className="text-xs text-slate-600 dark:text-slate-300">
+            Are you sure you want to mark <strong>{resident.name}</strong> as checked out? Their bed slot in Room {resident.room?.roomNumber} will immediately become available for new allocation.
+          </p>
+
+          <form onSubmit={handleExecuteCheckout} className="space-y-4">
+            <div>
+              <label className="block text-xs text-slate-700 dark:text-slate-400 mb-1">Reason for Leaving</label>
+              <input
+                type="text"
+                placeholder="e.g. Job transfer / Course completed"
+                value={checkoutReason}
+                onChange={(e) => setCheckoutReason(e.target.value)}
+                className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 outline-none"
+              />
+            </div>
+
+            <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setShowCheckoutModal(false)}
+                className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs text-slate-700 dark:text-slate-300 cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={checkingOut}
+                className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold disabled:opacity-50 cursor-pointer"
+              >
+                {checkingOut ? 'Checking out...' : 'Confirm Checkout'}
+              </button>
+            </div>
+          </form>
+        </div>
+      </Modal>
 
       {/* Record Payment Modal */}
       <RecordPaymentModal
@@ -653,21 +648,10 @@ export default function ResidentProfilePage({
       />
 
       {/* Receipt Modal */}
-      {selectedReceipt && (
-        <div
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setSelectedReceipt(null);
-          }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
-        >
-          <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <ReceiptCard
-              payment={selectedReceipt}
-              onClose={() => setSelectedReceipt(null)}
-            />
-          </div>
-        </div>
-      )}
+      <ReceiptModal
+        payment={selectedReceipt}
+        onClose={() => setSelectedReceipt(null)}
+      />
     </div>
   );
 }

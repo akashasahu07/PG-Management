@@ -14,18 +14,9 @@ async function main() {
   await prisma.room.deleteMany();
   await prisma.floor.deleteMany();
   await prisma.notification.deleteMany();
-  await prisma.admin.deleteMany();
+  // Note: Existing admin accounts are preserved and not wiped during re-seeding
 
-  console.log('Seeding Admin...');
-  const passwordHash = await bcrypt.hash('adminpassword123', 10);
-  await prisma.admin.create({
-    data: {
-      username: 'admin',
-      passwordHash,
-      name: 'Elite Homes Admin',
-      role: 'ADMIN',
-    },
-  });
+  console.log('Skipping default demo admin creation (configured via owner setup portal)...');
 
   console.log('Seeding Floors, Rooms, and Beds...');
   // Ground Floor

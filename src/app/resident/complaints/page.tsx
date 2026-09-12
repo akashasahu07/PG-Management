@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { LifeBuoy, Plus, CheckCircle2, Clock, AlertCircle, X, Loader2 } from 'lucide-react';
 import { formatDate } from '@/lib/due-date';
 import { TimelineTracker } from '@/components/complaints/TimelineTracker';
+import { Modal } from '@/components/ui/Modal';
 
 export default function ResidentComplaintsPage() {
   const [complaints, setComplaints] = useState<any[]>([]);
@@ -188,122 +189,117 @@ export default function ResidentComplaintsPage() {
       )}
 
       {/* Lodge Complaint Modal */}
-      {showForm && (
-        <div
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setShowForm(false);
-          }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-black/75 backdrop-blur-sm animate-fade-in"
-        >
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-slide-up">
-            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <LifeBuoy className="w-5 h-5 text-sky-600 dark:text-sky-400" />
-                <span>File a Maintenance Complaint</span>
-              </h3>
-              <button
-                onClick={() => setShowForm(false)}
-                className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
+      <Modal
+        isOpen={showForm}
+        onClose={() => setShowForm(false)}
+        maxWidthClass="max-w-lg"
+      >
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-3xl w-full overflow-hidden shadow-2xl animate-slide-up">
+          <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <LifeBuoy className="w-5 h-5 text-sky-600 dark:text-sky-400" />
+              <span>File a Maintenance Complaint</span>
+            </h3>
+            <button
+              onClick={() => setShowForm(false)}
+              className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+            {formError && (
+              <div className="p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-medium">
+                {formError}
+              </div>
+            )}
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-400 mb-1.5">
+                  Category *
+                </label>
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white outline-none focus:border-indigo-500"
+                >
+                  <option value="Room Maintenance">Room Maintenance</option>
+                  <option value="Electrical">Electrical</option>
+                  <option value="Plumbing">Plumbing</option>
+                  <option value="Wi-Fi">Wi-Fi</option>
+                  <option value="Cleaning">Cleaning</option>
+                  <option value="Furniture">Furniture</option>
+                  <option value="AC/Fan">AC/Fan</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-400 mb-1.5">
+                  Priority
+                </label>
+                <select
+                  value={priority}
+                  onChange={(e) => setPriority(e.target.value)}
+                  className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white outline-none focus:border-indigo-500"
+                >
+                  <option value="LOW">Low (General)</option>
+                  <option value="MEDIUM">Medium (Normal)</option>
+                  <option value="HIGH">High (Urgent Attention)</option>
+                  <option value="URGENT">Urgent (Emergency)</option>
+                </select>
+              </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
-              {formError && (
-                <div className="p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-medium">
-                  {formError}
-                </div>
-              )}
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-400 mb-1.5">
+                Subject Summary *
+              </label>
+              <input
+                type="text"
+                required
+                placeholder="e.g. Geyser not working in bathroom"
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+                className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white outline-none focus:border-indigo-500"
+              />
+            </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-400 mb-1.5">
-                    Category *
-                  </label>
-                  <select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white outline-none focus:border-indigo-500"
-                  >
-                    <option value="Room Maintenance">Room Maintenance</option>
-                    <option value="Electrical">Electrical</option>
-                    <option value="Plumbing">Plumbing</option>
-                    <option value="Wi-Fi">Wi-Fi</option>
-                    <option value="Cleaning">Cleaning</option>
-                    <option value="Furniture">Furniture</option>
-                    <option value="AC/Fan">AC/Fan</option>
-                    <option value="Security">Security</option>
-                    <option value="Noise">Noise</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-400 mb-1.5">
+                Detailed Description *
+              </label>
+              <textarea
+                required
+                rows={4}
+                placeholder="Describe the problem in detail to help the technician resolve it quickly..."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white outline-none focus:border-indigo-500 resize-none"
+              />
+            </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-400 mb-1.5">
-                    Priority
-                  </label>
-                  <select
-                    value={priority}
-                    onChange={(e) => setPriority(e.target.value)}
-                    className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white outline-none focus:border-indigo-500"
-                  >
-                    <option value="LOW">Low</option>
-                    <option value="MEDIUM">Medium</option>
-                    <option value="HIGH">High</option>
-                    <option value="URGENT">Urgent</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-400 mb-1.5">
-                  Subject *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Geyser not heating water properly"
-                  value={subject}
-                  onChange={(e) => setSubject(e.target.value)}
-                  className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:border-indigo-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-400 mb-1.5">
-                  Detailed Description *
-                </label>
-                <textarea
-                  required
-                  rows={4}
-                  placeholder="Provide any helpful details for the maintenance technician..."
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:border-indigo-500"
-                />
-              </div>
-
-              <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setShowForm(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs text-slate-700 dark:text-slate-300 font-medium transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="px-5 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold flex items-center gap-2 disabled:opacity-50 transition-colors shadow-md"
-                >
-                  {submitting ? 'Submitting...' : 'Submit Ticket'}
-                </button>
-              </div>
-            </form>
-          </div>
+            <div className="pt-2 flex items-center justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setShowForm(false)}
+                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="px-5 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold flex items-center gap-2 disabled:opacity-50 transition-colors shadow-md cursor-pointer"
+              >
+                {submitting ? 'Submitting...' : 'Submit Ticket'}
+              </button>
+            </div>
+          </form>
         </div>
-      )}
+      </Modal>
     </div>
   );
 }

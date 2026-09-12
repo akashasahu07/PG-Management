@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/lib/due-date';
 import { RecordPaymentModal } from '@/components/admin/RecordPaymentModal';
-import { ReceiptCard } from '@/components/receipts/ReceiptCard';
+import { ReceiptModal } from '@/components/receipts/ReceiptModal';
 
 export default function AdminPaymentsPage() {
   const [payments, setPayments] = useState<any[]>([]);
@@ -26,6 +26,17 @@ export default function AdminPaymentsPage() {
   useEffect(() => {
     fetchPayments();
   }, [statusFilter]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowRecordModal(false);
+        setSelectedReceipt(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const fetchPayments = async () => {
     setLoading(true);
@@ -197,10 +208,10 @@ export default function AdminPaymentsPage() {
                     <td className="p-4 text-right">
                       <button
                         onClick={() => setSelectedReceipt(p)}
-                        className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700 text-xs font-medium inline-flex items-center gap-1.5 transition-colors"
+                        className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700 text-xs font-semibold inline-flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm hover:shadow"
                       >
                         <Printer className="w-3.5 h-3.5 text-indigo-500" />
-                        <span>Print Receipt</span>
+                        <span>Save / View Receipt</span>
                       </button>
                     </td>
                   </tr>
@@ -222,21 +233,10 @@ export default function AdminPaymentsPage() {
       />
 
       {/* Printable Receipt Modal */}
-      {selectedReceipt && (
-        <div
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setSelectedReceipt(null);
-          }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
-        >
-          <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <ReceiptCard
-              payment={selectedReceipt}
-              onClose={() => setSelectedReceipt(null)}
-            />
-          </div>
-        </div>
-      )}
+      <ReceiptModal
+        payment={selectedReceipt}
+        onClose={() => setSelectedReceipt(null)}
+      />
     </div>
   );
 }

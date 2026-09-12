@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { X, UserPlus, Sparkles, Loader2 } from 'lucide-react';
+import { Modal } from '@/components/ui/Modal';
 import { formatCurrency } from '@/lib/due-date';
 import { generateResidentId } from '@/lib/id-generator';
 
@@ -138,13 +139,8 @@ export function AddResidentModal({
   if (!isOpen) return null;
 
   return (
-    <div
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
-    >
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-3xl w-full max-w-xl overflow-hidden shadow-2xl animate-slide-up">
+    <Modal isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-xl">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-3xl w-full overflow-hidden shadow-2xl animate-slide-up">
         {/* Header */}
         <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -330,6 +326,6 @@ export function AddResidentModal({
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 }

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/ui/Navbar';
+import { BrandLogo } from '@/components/ui/BrandLogo';
 import {
   Shield,
   Lock,
@@ -238,9 +239,7 @@ export default function AdminLoginPage() {
             /* First-Time Master Setup Form */
             <div>
               <div className="text-center mb-6">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 to-sky-500 flex items-center justify-center text-white mx-auto shadow-xl shadow-indigo-500/30 mb-3">
-                  <Sparkles className="w-7 h-7" />
-                </div>
+                <BrandLogo size={56} className="mx-auto mb-3" />
                 <div className="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 mb-2">
                   Initial Setup
                 </div>
@@ -437,9 +436,7 @@ export default function AdminLoginPage() {
             /* Regular Secure Owner Login Form */
             <div>
               <div className="text-center mb-6">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 to-sky-500 flex items-center justify-center text-white mx-auto shadow-xl shadow-indigo-500/30 mb-3">
-                  <Shield className="w-7 h-7" />
-                </div>
+                <BrandLogo size={56} className="mx-auto mb-3" />
                 <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
                   Admin Sign In
                 </h1>

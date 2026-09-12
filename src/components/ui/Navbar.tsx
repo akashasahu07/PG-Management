@@ -4,7 +4,8 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { ThemeToggle } from '../ThemeToggle';
-import { Building2, Shield, User, LogOut } from 'lucide-react';
+import { BrandLogo } from './BrandLogo';
+import { Shield, User, LogOut } from 'lucide-react';
 
 interface NavbarProps {
   userRole?: 'ADMIN' | 'RESIDENT' | null;
@@ -31,9 +32,7 @@ export function Navbar({ userRole, userName, userSubtitle }: NavbarProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-sky-400 flex items-center justify-center shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition-transform duration-200">
-            <Building2 className="w-5 h-5 text-white" />
-          </div>
+          <BrandLogo size={42} className="group-hover:scale-105 transition-transform duration-200" />
           <div>
             <div className="font-bold text-lg tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
               Elite Homes

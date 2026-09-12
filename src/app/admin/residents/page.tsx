@@ -16,7 +16,7 @@ import {
 import { formatCurrency, formatDate } from '@/lib/due-date';
 import { AddResidentModal } from '@/components/admin/AddResidentModal';
 import { RecordPaymentModal } from '@/components/admin/RecordPaymentModal';
-import { ReceiptCard } from '@/components/receipts/ReceiptCard';
+import { ReceiptModal } from '@/components/receipts/ReceiptModal';
 
 export default function AdminResidentsPage() {
   const [residents, setResidents] = useState<any[]>([]);
@@ -36,6 +36,18 @@ export default function AdminResidentsPage() {
   useEffect(() => {
     fetchResidents();
   }, [floor, status, paymentFilter]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowAddResident(false);
+        setRecordPaymentForResident(null);
+        setReceiptPayment(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const fetchResidents = async () => {
     setLoading(true);
@@ -310,21 +322,10 @@ export default function AdminResidentsPage() {
       )}
 
       {/* Receipt View Modal */}
-      {receiptPayment && (
-        <div
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setReceiptPayment(null);
-          }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
-        >
-          <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <ReceiptCard
-              payment={receiptPayment}
-              onClose={() => setReceiptPayment(null)}
-            />
-          </div>
-        </div>
-      )}
+      <ReceiptModal
+        payment={receiptPayment}
+        onClose={() => setReceiptPayment(null)}
+      />
     </div>
   );
 }

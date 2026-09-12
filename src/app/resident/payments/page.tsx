@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { CreditCard, Printer, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/lib/due-date';
-import { ReceiptCard } from '@/components/receipts/ReceiptCard';
+import { ReceiptModal } from '@/components/receipts/ReceiptModal';
 
 export default function ResidentPaymentsPage() {
   const [payments, setPayments] = useState<any[]>([]);
@@ -98,21 +98,10 @@ export default function ResidentPaymentsPage() {
       )}
 
       {/* Receipt Modal */}
-      {selectedReceipt && (
-        <div
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setSelectedReceipt(null);
-          }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in"
-        >
-          <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <ReceiptCard
-              payment={selectedReceipt}
-              onClose={() => setSelectedReceipt(null)}
-            />
-          </div>
-        </div>
-      )}
+      <ReceiptModal
+        payment={selectedReceipt}
+        onClose={() => setSelectedReceipt(null)}
+      />
     </div>
   );
 }

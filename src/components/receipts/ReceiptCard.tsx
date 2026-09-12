@@ -1,38 +1,40 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { Printer, Building2, CheckCircle2, ShieldCheck, Download, X } from 'lucide-react';
+import { Printer, CheckCircle2, ShieldCheck, Download, X, ExternalLink } from 'lucide-react';
+import { BrandLogo } from '@/components/ui/BrandLogo';
+import { Modal } from '@/components/ui/Modal';
 import { formatDate, formatCurrency } from '@/lib/due-date';
 
-interface ReceiptCardProps {
+export interface ReceiptCardProps {
   payment: {
-    id: string;
-    paymentId: string;
-    amount: number;
-    paymentDate: string | Date;
-    billingStartDate: string | Date;
-    billingEndDate: string | Date;
-    paymentMethod: string;
+    id?: string;
+    paymentId?: string;
+    amount?: number;
+    paymentDate?: string | Date | null;
+    billingStartDate?: string | Date | null;
+    billingEndDate?: string | Date | null;
+    paymentMethod?: string;
     transactionRef?: string | null;
-    status: string;
+    status?: string;
     receiptNotes?: string | null;
-    resident: {
-      id: string;
-      residentId: string;
-      name: string;
-      phone: string;
-      joiningDate: string | Date;
-      room: {
-        roomNumber: string;
-        sharingCapacity: number;
-        floor: {
-          displayName: string;
+    resident?: {
+      id?: string;
+      residentId?: string;
+      name?: string;
+      phone?: string;
+      joiningDate?: string | Date | null;
+      room?: {
+        roomNumber?: string;
+        sharingCapacity?: number;
+        floor?: {
+          displayName?: string;
         };
       };
-      bed: {
-        bedNumber: number;
+      bed?: {
+        bedNumber?: number;
       };
-    };
+    } | null;
   };
   onClose?: () => void;
   showPrintActions?: boolean;
@@ -44,7 +46,13 @@ export function ReceiptCard({
   showPrintActions = true,
 }: ReceiptCardProps) {
   const handlePrint = () => {
+    // Explicitly unfreeze body overflow for Chromium / Edge printing
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'visible';
     window.print();
+    setTimeout(() => {
+      document.body.style.overflow = prevOverflow;
+    }, 1000);
   };
 
   useEffect(() => {
@@ -57,19 +65,37 @@ export function ReceiptCard({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
+  const resident = payment?.resident;
+  const room = resident?.room;
+  const bed = resident?.bed;
+  const targetId = payment?.id || payment?.paymentId;
+
   return (
     <div className="printable-receipt bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl max-w-2xl mx-auto text-slate-900 dark:text-slate-100 transition-colors relative">
       {/* Top Action Bar (hidden on print) */}
-      <div className="no-print flex items-center justify-between pb-5 mb-5 border-b border-slate-200 dark:border-slate-800">
+      <div className="no-print flex items-center justify-between pb-5 mb-5 border-b border-slate-200 dark:border-slate-800 gap-2 flex-wrap">
         <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-          <ShieldCheck className="w-4 h-4 text-emerald-500" />
+          <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
           <span>Verified Digital Receipt</span>
         </div>
         <div className="flex items-center gap-2">
+          {targetId && (
+            <a
+              href={`/receipt/${targetId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition-colors border border-slate-200 dark:border-slate-700 cursor-pointer"
+              title="Open standalone receipt in new tab"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-indigo-500" />
+              <span>Full View</span>
+            </a>
+          )}
           {showPrintActions && (
             <button
               onClick={handlePrint}
-              className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md flex items-center gap-2 transition-all"
+              className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md flex items-center gap-2 transition-all cursor-pointer"
+              title="Print Receipt or Save as PDF"
             >
               <Printer className="w-4 h-4" />
               <span>Print / Save PDF</span>
@@ -78,7 +104,7 @@ export function ReceiptCard({
           {onClose && (
             <button
               onClick={onClose}
-              className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition-colors border border-slate-200 dark:border-slate-700"
+              className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition-colors border border-slate-200 dark:border-slate-700 cursor-pointer"
               title="Close Receipt (Esc)"
             >
               <X className="w-4 h-4" />
@@ -89,30 +115,28 @@ export function ReceiptCard({
       </div>
 
       {/* Official Receipt Header */}
-      <div className="flex items-start justify-between border-b-2 border-indigo-500/20 pb-6">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-600/30">
-            <Building2 className="w-6 h-6" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
-              ELITE HOMES
+      <div className="flex items-start justify-between border-b-2 border-indigo-500/20 pb-6 gap-4">
+        <div className="flex items-center gap-3.5 shrink-0">
+          <BrandLogo size={52} className="shadow-md shadow-indigo-500/20 shrink-0" />
+          <div className="shrink-0">
+            <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
+              ELITE HOMES PG
             </h1>
             <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-              Hostel & PG Accommodation Management
+              Hostel & Accommodation Management
             </p>
           </div>
         </div>
 
         <div className="text-right">
           <span className="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-            {payment.status}
+            {payment?.status || 'PAID'}
           </span>
           <div className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300 mt-2">
-            {payment.paymentId}
+            {payment?.paymentId || 'EH-REC'}
           </div>
           <div className="text-[11px] text-slate-500">
-            Date: {formatDate(payment.paymentDate)}
+            Date: {formatDate(payment?.paymentDate)}
           </div>
         </div>
       </div>
@@ -124,13 +148,13 @@ export function ReceiptCard({
             Billed To
           </div>
           <div className="text-base font-bold text-slate-900 dark:text-white mt-1">
-            {payment.resident.name}
+            {resident?.name || 'Resident'}
           </div>
           <div className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
-            Phone: {payment.resident.phone}
+            Phone: {resident?.phone || '—'}
           </div>
           <div className="text-xs font-mono text-indigo-600 dark:text-indigo-400 font-semibold mt-0.5">
-            Resident ID: {payment.resident.residentId}
+            Resident ID: {resident?.residentId || '—'}
           </div>
         </div>
 
@@ -139,13 +163,13 @@ export function ReceiptCard({
             Accommodation Details
           </div>
           <div className="text-sm font-semibold text-slate-800 dark:text-slate-200 mt-1">
-            Room {payment.resident.room.roomNumber} (Bed #{payment.resident.bed.bedNumber})
+            Room {room?.roomNumber || '—'} {bed?.bedNumber !== undefined ? `(Bed #${bed.bedNumber})` : ''}
           </div>
           <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            {payment.resident.room.floor.displayName} • {payment.resident.room.sharingCapacity}-Sharing
+            {room?.floor?.displayName || 'Floor'} {room?.sharingCapacity ? `• ${room.sharingCapacity}-Sharing` : ''}
           </div>
           <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Joined: {formatDate(payment.resident.joiningDate)}
+            Joined: {resident?.joiningDate ? formatDate(resident.joiningDate) : '—'}
           </div>
         </div>
       </div>
@@ -165,23 +189,23 @@ export function ReceiptCard({
             <tr>
               <td className="p-3.5 font-medium">
                 Monthly Rent Accommodation
-                {payment.receiptNotes && (
+                {payment?.receiptNotes && (
                   <div className="text-[11px] text-slate-500 italic mt-0.5">
                     Note: {payment.receiptNotes}
                   </div>
                 )}
               </td>
               <td className="p-3.5 text-slate-600 dark:text-slate-300">
-                {formatDate(payment.billingStartDate)} – {formatDate(payment.billingEndDate)}
+                {formatDate(payment?.billingStartDate)} – {formatDate(payment?.billingEndDate)}
               </td>
               <td className="p-3.5 font-mono">
-                {payment.paymentMethod}
-                {payment.transactionRef && (
+                {payment?.paymentMethod || 'UPI'}
+                {payment?.transactionRef && (
                   <div className="text-[10px] text-slate-500">Ref: {payment.transactionRef}</div>
                 )}
               </td>
               <td className="p-3.5 text-right font-bold text-sm text-slate-900 dark:text-white">
-                {formatCurrency(payment.amount)}
+                {formatCurrency(payment?.amount || 0)}
               </td>
             </tr>
           </tbody>
@@ -207,7 +231,7 @@ export function ReceiptCard({
             Total Paid
           </div>
           <div className="text-2xl font-black text-indigo-600 dark:text-indigo-400">
-            {formatCurrency(payment.amount)}
+            {formatCurrency(payment?.amount || 0)}
           </div>
         </div>
       </div>
@@ -231,7 +255,7 @@ export function ReceiptCard({
         <div className="no-print pt-6 mt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end">
           <button
             onClick={onClose}
-            className="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center gap-2 transition-colors border border-slate-200 dark:border-slate-700"
+            className="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center gap-2 transition-colors border border-slate-200 dark:border-slate-700 cursor-pointer"
           >
             <X className="w-4 h-4" />
             <span>Close Receipt</span>
@@ -241,3 +265,20 @@ export function ReceiptCard({
     </div>
   );
 }
+
+export function ReceiptModal({
+  payment,
+  onClose,
+}: {
+  payment: any | null;
+  onClose: () => void;
+}) {
+  if (!payment) return null;
+
+  return (
+    <Modal isOpen={!!payment} onClose={onClose}>
+      <ReceiptCard payment={payment} onClose={onClose} showPrintActions={true} />
+    </Modal>
+  );
+}
+

@@ -2,26 +2,32 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { ReceiptCard } from '@/components/receipts/ReceiptCard';
 
 export default function StandaloneReceiptPage({
-  params,
+  params: initialParams,
 }: {
-  params: { id: string };
+  params?: { id: string };
 }) {
+  const routeParams = useParams();
+  const paymentId = (routeParams?.id as string) || initialParams?.id || '';
   const [payment, setPayment] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetchPayment();
-  }, [params.id]);
+    if (paymentId) {
+      fetchPayment();
+    }
+  }, [paymentId]);
 
   const fetchPayment = async () => {
+    if (!paymentId) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/payments/${params.id}`);
+      const res = await fetch(`/api/payments/${paymentId}`);
       if (!res.ok) throw new Error('Receipt not found or unauthorized.');
       const data = await res.json();
       setPayment(data.payment);

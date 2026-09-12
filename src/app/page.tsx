@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/ui/Navbar';
+import { BrandLogo } from '@/components/ui/BrandLogo';
 import {
   KeyRound,
   CreditCard,
@@ -106,9 +107,7 @@ export default function LandingPage() {
           <div className="lg:col-span-5">
             <div className="glass-card rounded-3xl p-6 sm:p-8 shadow-2xl relative">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 to-sky-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25">
-                  <KeyRound className="w-6 h-6" />
-                </div>
+                <BrandLogo size={48} className="shadow-lg shadow-indigo-500/25 shrink-0" />
                 <div>
                   <h2 className="text-xl font-bold text-slate-900 dark:text-white">Resident Portal Access</h2>
                   <p className="text-xs text-slate-500 dark:text-slate-400">Enter your unique ID to view your dashboard</p>

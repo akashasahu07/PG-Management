@@ -112,8 +112,10 @@ export function computeResidentRentStatus(
   };
 }
 
-export function formatDate(dateInput: Date | string): string {
+export function formatDate(dateInput?: Date | string | null): string {
+  if (!dateInput) return '—';
   const d = new Date(dateInput);
+  if (isNaN(d.getTime())) return '—';
   return d.toLocaleDateString('en-IN', {
     day: '2-digit',
     month: 'short',

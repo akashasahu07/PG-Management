@@ -1,0 +1,31 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="eh-bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4338ca" />
+      <stop offset="50%" stop-color="#4f46e5" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+    <linearGradient id="eh-glow-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#818cf8" />
+    </linearGradient>
+    <linearGradient id="eh-gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+  <rect x="3" y="3" width="94" height="94" rx="26" fill="url(#eh-bg-grad)" />
+  <g id="eh-emblem">
+    <path d="M 50 10 L 53.5 17 L 60.5 17 L 55 21 L 57 28 L 50 23.5 L 43 28 L 45 21 L 39.5 17 L 46.5 17 Z" fill="url(#eh-gold-grad)" />
+    <path d="M 21 40 L 50 18 L 79 40 L 73.5 44 L 50 26.5 L 26.5 44 Z" fill="#ffffff" fill-opacity="0.95" />
+    <rect x="26" y="42" width="10" height="38" rx="4" fill="#ffffff" />
+    <rect x="35" y="42" width="15" height="7.5" rx="3" fill="#ffffff" />
+    <rect x="35" y="57" width="30" height="8" rx="3" fill="url(#eh-glow-grad)" />
+    <rect x="35" y="72.5" width="15" height="7.5" rx="3" fill="#ffffff" />
+    <rect x="64" y="42" width="10" height="38" rx="4" fill="#ffffff" />
+    <circle cx="69" cy="48" r="1.75" fill="#4f46e5" />
+    <circle cx="69" cy="69" r="1.75" fill="#4f46e5" />
+    <circle cx="69" cy="74" r="1.75" fill="#4f46e5" />
+    <rect x="22" y="83" width="56" height="3.5" rx="1.75" fill="url(#eh-glow-grad)" fill-opacity="0.8" />
+  </g>
+</svg>
