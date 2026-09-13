@@ -14,9 +14,11 @@
 [![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://www.sqlite.org/)
 [![Lucide Icons](https://img.shields.io/badge/Lucide_Icons-0.468-F05032?style=for-the-badge&logo=feather&logoColor=white)](https://lucide.dev/)
 [![JWT](https://img.shields.io/badge/JWT_Auth-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)](https://jwt.io/)
+[![Created by FlashCode](https://img.shields.io/badge/Created_by-FlashCode-6366F1?style=for-the-badge&logo=codeforces&logoColor=white)](https://github.com/)
+[![Instagram](https://img.shields.io/badge/Instagram-@flashcode07-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/flashcode07/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
-[Live Demo](#-getting-started) • [Key Features](#-key-features) • [Building Layout](#-building-layout--floor-plan) • [Database Schema](#-database-schema--architecture) • [API Reference](#-api-endpoints)
+[Live Demo](#-getting-started) • [Key Features](#-key-features) • [Building Layout](#-building-layout--floor-plan) • [Database Schema](#-database-schema--architecture) • [Author](#-author--developer) • [API Reference](#-api-endpoints)
 
 </div>
 
@@ -35,6 +37,7 @@
 - [Receipt & Print Engine](#-digital-receipt--print-engine)
 - [Brand Identity & Logo Design](#-brand-identity--logo-design)
 - [API Endpoints Reference](#-api-endpoints)
+- [Author & Developer](#-author--developer)
 - [Contributing & License](#-license)
 
 ---
@@ -427,6 +430,23 @@ The **Elite Homes PG** brand identity is rendered via a custom, resolution-indep
 
 ---
 
+## 👨‍💻 Author & Developer
+
+<div align="center">
+
+### Designed & Engineered by **FlashCode**
+
+[![Instagram Profile](https://img.shields.io/badge/Instagram-@flashcode07-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/flashcode07/)
+[![Send DM](https://img.shields.io/badge/Direct_Message-Send_DM-833AB4?style=for-the-badge&logo=instagram&logoColor=white)](https://ig.me/m/flashcode07)
+
+**Connect with me on Instagram:** [@flashcode07](https://www.instagram.com/flashcode07/)
+
+*For custom full-stack software development, SaaS products, coliving web solutions, or technical collaboration, feel free to reach out!*
+
+</div>
+
+---
+
 ## 📄 License
 
 This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
@@ -435,8 +455,10 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 <div align="center">
 
-**Built with precision for Elite Homes PG Accommodation**
+**Built with precision by FlashCode for Elite Homes PG Accommodation**
 
 *Crafted using Next.js 14, React 18, TypeScript, Tailwind CSS, and Prisma ORM.*
+
+[![Instagram](https://img.shields.io/badge/Follow-@flashcode07-E4405F?style=flat-square&logo=instagram&logoColor=white)](https://www.instagram.com/flashcode07/)
 
 </div>
