@@ -86,8 +86,9 @@ export async function POST(req: NextRequest) {
     });
 
     return response;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Admin setup error:', error);
-    return NextResponse.json({ error: 'Failed to create master admin account.' }, { status: 500 });
+    const detail = error?.message || 'Failed to create master admin account.';
+    return NextResponse.json({ error: detail }, { status: 500 });
   }
 }
