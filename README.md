@@ -330,9 +330,8 @@ npm run start
 
 ### Master Admin Portal (`/admin/login`)
 - **Portal URL**: `http://localhost:3000/admin/login`
-- **Username**: `akash7070` *(case-insensitive: accepts `akash7070`, `Akash`, or `Akash7070`)*
-- **Display Name**: `Akash`
-- **Self-Healing Recovery**: If the password is ever forgotten, click **"Reset Master Password?"** directly on the login screen to set a new password.
+- **Username & Name**: Set up during first-time master administrator onboarding
+- **Self-Healing Recovery**: If the master password is ever forgotten, click **"Reset Master Password?"** directly on the login screen to set a new password.
 
 ### Resident Portal (`/`)
 - **Portal URL**: `http://localhost:3000`

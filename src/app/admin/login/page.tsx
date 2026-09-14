@@ -62,10 +62,9 @@ export default function AdminLoginPage() {
       if (data.isSetup) {
         setMode('login');
         if (data.adminUsername) {
-          setUsername(data.adminUsername);
           setRegisteredAdmin({
             username: data.adminUsername,
-            name: data.adminName || 'Owner',
+            name: data.adminName || 'Administrator',
           });
         }
       } else {
@@ -271,7 +270,7 @@ export default function AdminLoginPage() {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Akash"
+                    placeholder="Enter your full name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white outline-none focus:border-indigo-500 transition-colors"
@@ -285,7 +284,7 @@ export default function AdminLoginPage() {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. akash7070"
+                    placeholder="Enter admin username"
                     value={setupUsername}
                     onChange={(e) => setSetupUsername(e.target.value)}
                     className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white outline-none focus:border-indigo-500 transition-colors"
@@ -299,7 +298,7 @@ export default function AdminLoginPage() {
                   <input
                     type="password"
                     required
-                    placeholder="••••••••••••"
+                    placeholder="Enter password"
                     value={setupPassword}
                     onChange={(e) => setSetupPassword(e.target.value)}
                     className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white outline-none focus:border-indigo-500 transition-colors"
@@ -313,7 +312,7 @@ export default function AdminLoginPage() {
                   <input
                     type="password"
                     required
-                    placeholder="••••••••••••"
+                    placeholder="Confirm password"
                     value={setupConfirmPassword}
                     onChange={(e) => setSetupConfirmPassword(e.target.value)}
                     className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white outline-none focus:border-indigo-500 transition-colors"
@@ -350,11 +349,7 @@ export default function AdminLoginPage() {
                   Reset Master Password
                 </h1>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                  Enter a new secure password for{' '}
-                  <span className="font-bold text-slate-900 dark:text-white">
-                    {registeredAdmin?.name || 'Administrator'}
-                  </span>{' '}
-                  ({registeredAdmin?.username || username})
+                  Enter a new secure password for your master administrator account.
                 </p>
               </div>
 
@@ -446,10 +441,8 @@ export default function AdminLoginPage() {
 
                 {registeredAdmin && (
                   <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60 font-medium">
-                    <User className="w-3.5 h-3.5 text-indigo-500" />
-                    <span>
-                      Registered Master: <strong>{registeredAdmin.name}</strong> (@{registeredAdmin.username})
-                    </span>
+                    <Shield className="w-3.5 h-3.5 text-indigo-500" />
+                    <span>Master Administrator Configured</span>
                   </div>
                 )}
               </div>
@@ -476,7 +469,7 @@ export default function AdminLoginPage() {
                     <input
                       type="text"
                       required
-                      placeholder="Username or Name (e.g. akash7070 or Akash)"
+                      placeholder="Enter username or full name"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:border-indigo-500 transition-colors font-medium"
@@ -507,7 +500,7 @@ export default function AdminLoginPage() {
                     <input
                       type={showPassword ? 'text' : 'password'}
                       required
-                      placeholder="••••••••••••"
+                      placeholder="Enter password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="w-full pl-10 pr-10 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:border-indigo-500 transition-colors"
