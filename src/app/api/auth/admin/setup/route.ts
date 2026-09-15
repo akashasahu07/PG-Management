@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import { signAdminToken, ADMIN_COOKIE_NAME } from '@/lib/auth';
+import { ensureBuildingStructure } from '@/lib/init-building';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,8 +16,15 @@ export async function GET() {
       adminUsername: admin?.username || null,
       adminName: admin?.name || null,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Check admin setup error:', error);
+    if (error?.message?.includes('does not exist')) {
+      return NextResponse.json({
+        isSetup: false,
+        adminUsername: null,
+        adminName: null,
+      });
+    }
     return NextResponse.json({ error: 'Failed to verify admin status.' }, { status: 500 });
   }
 }
@@ -57,6 +65,13 @@ export async function POST(req: NextRequest) {
         role: 'SUPER_ADMIN',
       },
     });
+
+    // Automatically initialize standard PG building structure (floors, rooms, beds) if empty
+    try {
+      await ensureBuildingStructure(prisma);
+    } catch (structErr) {
+      console.error('Building structure auto-init error (non-fatal):', structErr);
+    }
 
     const token = signAdminToken({
       adminId: admin.id,
